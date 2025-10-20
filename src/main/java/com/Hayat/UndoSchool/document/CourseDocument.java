@@ -1,18 +1,19 @@
 package com.Hayat.UndoSchool.document;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.elasticsearch.core.suggest.Completion;
 
-@Document(indexName = "courses")
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Document(indexName = "courses")
 public class CourseDocument {
 
     @Id
@@ -20,6 +21,9 @@ public class CourseDocument {
 
     @Field(type = FieldType.Text)
     private String title;
+
+    @CompletionField(maxInputLength = 100)
+    private Completion suggest;
 
     @Field(type = FieldType.Text)
     private String description;
@@ -42,6 +46,6 @@ public class CourseDocument {
     @Field(type = FieldType.Double)
     private double price;
 
-    @Field(type = FieldType.Date)
-    private String nextSessionDate;
+    @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
+    private LocalDateTime nextSessionDate;
 }
