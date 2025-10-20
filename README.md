@@ -158,8 +158,6 @@ This section demonstrates your advanced features like **fuzzy matching** and **a
 
 ---
 
----
-
 ## 🙋‍♂️ Personal Note
 
 This project was built as part of the UndoSchool Internship assignment.  
