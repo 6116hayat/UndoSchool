@@ -1,0 +1,199 @@
+✅ 1️⃣ Basic Setup Tests
+Test 1 — Elasticsearch Connectivity
+
+Command:
+
+curl http://localhost:9200
+
+
+Expected Result:
+
+Returns cluster info with status 200 OK
+
+Shows "You Know, for Search" in the JSON.
+
+Test 2 — Spring Boot Running
+
+Command:
+
+curl http://localhost:8080/health
+
+
+Expected Result:
+
+Response: "App is running!"
+
+Test 3 — Index Creation Check
+
+Command:
+
+curl http://localhost:9200/courses?pretty
+
+
+Expected Result:
+
+JSON with index settings and mappings
+
+Confirms the courses index exists.
+
+✅ 2️⃣ Indexing & Data Tests
+Test 4 — Data Indexed
+
+Command:
+
+curl http://localhost:9200/courses/_count
+
+
+Expected Result:
+
+{"count": 50, "_shards": {"successful": 1}}
+
+Test 5 — Document Verification
+
+Command:
+
+curl http://localhost:9200/courses/_search?pretty
+
+
+Expected Result:
+
+Returns list of documents with fields like title, category, price, nextSessionDate.
+
+✅ 3️⃣ Search API Tests (/api/search)
+Test 6 — Basic Keyword Search
+
+Request:
+
+curl "http://localhost:8080/api/search?q=art"
+
+
+Expected:
+
+Returns courses where title or description contains “art”.
+
+Test 7 — Category Filter
+curl "http://localhost:8080/api/search?category=Science"
+
+
+Expected:
+
+Returns only courses with "category": "Science".
+
+Test 8 — Type Filter
+curl "http://localhost:8080/api/search?type=COURSE"
+
+
+Expected:
+
+Returns only courses of type "COURSE".
+
+Test 9 — Price Range Filter
+curl "http://localhost:8080/api/search?minPrice=100&maxPrice=300"
+
+
+Expected:
+
+Returns courses priced between ₹100–₹300.
+
+Test 10 — Age Range Filter
+curl "http://localhost:8080/api/search?minAge=7&maxAge=10"
+
+
+Expected:
+
+Returns courses for kids between 7–10 years old.
+
+Test 11 — Date Filter
+curl "http://localhost:8080/api/search?startDate=2025-06-01T00:00:00Z"
+
+
+Expected:
+
+Returns courses where nextSessionDate >= 2025-06-01.
+
+Test 12 — Sorting
+
+By Upcoming (default):
+
+curl "http://localhost:8080/api/search?q=science&sort=upcoming"
+
+
+→ Sorted by nearest upcoming date first.
+
+By Price Ascending:
+
+curl "http://localhost:8080/api/search?sort=priceAsc"
+
+
+→ Lowest price first.
+
+By Price Descending:
+
+curl "http://localhost:8080/api/search?sort=priceDesc"
+
+
+→ Highest price first.
+
+Test 13 — Pagination
+curl "http://localhost:8080/api/search?page=1&size=5"
+
+
+Expected:
+
+Returns 5 items starting from page 1.
+
+Helps confirm correct pagination.
+
+✅ 4️⃣ Autocomplete Tests (/api/search/suggest)
+Test 14 — Suggest Partial Titles
+curl "http://localhost:8080/api/search/suggest?q=phy"
+
+
+Expected:
+
+["Physics for Kids", "Physical Science 101"]
+
+Test 15 — No Match Suggest
+curl "http://localhost:8080/api/search/suggest?q=zzz"
+
+
+Expected:
+
+[]
+
+✅ 5️⃣ Fuzzy Search Tests
+Test 16 — Fuzzy Keyword Typo
+curl "http://localhost:8080/api/search?q=dinors"
+
+
+Expected:
+
+Should still return “Dinosaurs 101” or similar.
+
+✅ 6️⃣ Negative & Edge Case Tests
+Test 17 — Empty Query
+curl "http://localhost:8080/api/search"
+
+
+Expected:
+
+Returns all results (default) or empty array if you designed it that way.
+
+Test 18 — Invalid Parameters
+curl "http://localhost:8080/api/search?minPrice=abc"
+
+
+Expected:
+
+Returns a 400 Bad Request or descriptive error.
+
+Test 19 — Elasticsearch Down
+
+Stop Elasticsearch (docker stop elasticsearch) and run:
+
+curl "http://localhost:8080/api/search?q=math"
+
+
+Expected:
+
+Returns a clear connection error message, not a crash.
